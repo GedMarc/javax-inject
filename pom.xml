@@ -1,11 +1,12 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.jwebmp</groupId>
-  <artifactId>javax.inject</artifactId>
+    <artifactId>javax.inject</artifactId>
     <packaging>jar</packaging>
-  <name>javax.inject</name>
-  <version>1.1</version>
-  <description>The javax.inject API</description>
+    <name>javax.inject</name>
+    <version>1.1</version>
+    <description>The javax.inject API</description>
     <url>http://code.google.com/p/atinject/</url>
     <licenses>
         <license>
@@ -29,16 +30,16 @@
     </dependencies>
 
     <build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>tck</testSourceDirectory>
-		<testResources>
-			<testResource>
-				<directory>tck</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</testResource>
-		</testResources>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>tck</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>tck</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -57,14 +58,6 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.0</version>
-                <configuration>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.moditect</groupId>
                 <artifactId>moditect-maven-plugin</artifactId>
@@ -119,33 +112,6 @@
 
     <profiles>
         <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.0</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>jwebmp-distribution</id>
             <activation>
             </activation>
@@ -183,7 +149,61 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>sonartype-distribution</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonar-snapshot</id>
+                    <name>SonarType-snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonar-release</id>
+                    <name>SonarType-releases</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <passphrase>${gpg.passphrase}</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
+                    <plugin>
+                        <!-- This plugin doesn't work inside pluginManagement, for some reason -->
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.3</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonar-snapshot</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

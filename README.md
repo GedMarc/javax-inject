@@ -12,6 +12,9 @@ To follow the progress of the expert group, messages from the expert group
 mailing list are forwarded to an [observer mailing list] which anyone can
 join.
 
+## JPMS Update
+Version 1.1 (Group com.jwebmp) has strict naming for JPMS modules
+
 ## Implementations
 
 The following dependency injection systems have passed the [TCK][release]:
